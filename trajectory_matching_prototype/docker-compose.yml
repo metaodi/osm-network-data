@@ -1,0 +1,31 @@
+services:
+  valhalla:
+    # GIS-OPS Valhalla image: builds routing tiles from any *.pbf file
+    # placed in /custom_files on first start.
+    image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+    container_name: valhalla
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    volumes:
+      # PBF file(s) and generated tiles live here. Mounting ./data/osm
+      # means we share the same PBF source with OSMnx on the host.
+      - ./data/osm:/custom_files
+    environment:
+      # Skip downloading additional tilesets - we only use the local PBF.
+      - tile_urls=
+      - server_threads=2
+      # Use the PBF located in /custom_files to (re)build tiles when needed.
+      - use_tiles_ignore_pbf=False
+      - force_rebuild=False
+      # Disable optional datasets to keep build times short for the prototype.
+      - build_elevation=False
+      - build_admins=True
+      - build_time_zones=False
+      - serve_tiles=True
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
