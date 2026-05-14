@@ -34,7 +34,8 @@ Raw GPS  ─►  Valhalla (trace_attributes)  ─►  matched_edges
 
 ```
 ├── docker-compose.yml         # local Valhalla service
-├── requirements.txt
+├── pyproject.toml
+├── uv.lock
 ├── README.md
 ├── data/
 │   ├── osm/                   # *.osm.pbf lives here (shared with Valhalla)
@@ -55,8 +56,7 @@ This project uses [`uv`](https://docs.astral.sh/uv/) for dependency
 management.
 
 ```bash
-uv venv
-uv pip install -r requirements.txt
+uv sync
 ```
 
 Activate the environment if you want plain `python` to find the packages:
