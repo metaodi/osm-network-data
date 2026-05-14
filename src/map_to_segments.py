@@ -25,8 +25,15 @@ OUTPUT_COLUMNS: list[str] = [
     "distance_to_segment_m",
     "segment_name",
     "highway",
+    "maxspeed",
+    "road_context",
     "is_roundabout",
     "starts_or_ends_at_intersection",
+    "has_crossing",
+    "has_traffic_signals",
+    "has_stop_sign",
+    "has_give_way",
+    "cycleway",
 ]
 
 
@@ -125,6 +132,9 @@ def map_matched_edges_to_segments(
             seg_match = segments[segments["segment_id"] == segment_id]
             seg_row = seg_match.iloc[0] if not seg_match.empty else None
 
+        def _seg(col):
+            return seg_row[col] if seg_row is not None and col in seg_row.index else None
+
         rows.append(
             {
                 "trajectory_id": trajectory_id,
@@ -134,14 +144,21 @@ def map_matched_edges_to_segments(
                 "segment_id": segment_id,
                 "match_quality": match_quality,
                 "distance_to_segment_m": distance_m,
-                "segment_name": seg_row["name"] if seg_row is not None else None,
-                "highway": seg_row["highway"] if seg_row is not None else None,
-                "is_roundabout": bool(seg_row["is_roundabout"]) if seg_row is not None else None,
+                "segment_name": _seg("name"),
+                "highway": _seg("highway"),
+                "maxspeed": _seg("maxspeed"),
+                "road_context": _seg("road_context"),
+                "is_roundabout": bool(_seg("is_roundabout")) if _seg("is_roundabout") is not None else None,
                 "starts_or_ends_at_intersection": (
-                    bool(seg_row["starts_or_ends_at_intersection"])
-                    if seg_row is not None
+                    bool(_seg("starts_or_ends_at_intersection"))
+                    if _seg("starts_or_ends_at_intersection") is not None
                     else None
                 ),
+                "has_crossing": bool(_seg("has_crossing")) if _seg("has_crossing") is not None else None,
+                "has_traffic_signals": bool(_seg("has_traffic_signals")) if _seg("has_traffic_signals") is not None else None,
+                "has_stop_sign": bool(_seg("has_stop_sign")) if _seg("has_stop_sign") is not None else None,
+                "has_give_way": bool(_seg("has_give_way")) if _seg("has_give_way") is not None else None,
+                "cycleway": _seg("cycleway"),
             }
         )
 
