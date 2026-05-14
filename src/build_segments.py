@@ -251,6 +251,15 @@ def _build_ordered_line(way_edges: pd.DataFrame) -> Optional[LineString]:
             coords = coords[1:]  # Drop duplicated junction point
         all_coords.extend(coords)
 
+    # For closed ways (loops) the greedy traversal stops before revisiting the
+    # start node, so the closing segment is never processed above.
+    if not endpoints and len(path) >= 2:
+        last_n, first_n = path[-1], path[0]
+        if (last_n, first_n) in edge_geoms:
+            all_coords.extend(list(edge_geoms[(last_n, first_n)].coords)[1:])
+        elif (first_n, last_n) in edge_geoms:
+            all_coords.extend(list(reversed(edge_geoms[(first_n, last_n)].coords))[1:])
+
     return LineString(all_coords) if len(all_coords) >= 2 else None
 
 
