@@ -38,7 +38,7 @@ VALHALLA_TIMEOUT_S: float = 30.0
 # Bump this whenever the underlying segment definition changes (PBF version,
 # OSMnx filter, simplification settings, ...). segment_id values are only
 # stable within a single network_version.
-NETWORK_VERSION: str = "v0.1.0"
+NETWORK_VERSION: str = "v0.2.0"
 
 # ---------------------------------------------------------------------------
 # Coordinate reference systems
