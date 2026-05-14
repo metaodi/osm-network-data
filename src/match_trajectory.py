@@ -192,7 +192,10 @@ def parse_valhalla_response(response: dict[str, Any]) -> gpd.GeoDataFrame:
             }
         )
 
-    matched_edges = gpd.GeoDataFrame(rows, geometry="geometry", crs=CRS_WGS84)
+    if rows:
+        matched_edges = gpd.GeoDataFrame(rows, geometry="geometry", crs=CRS_WGS84)
+    else:
+        matched_edges = gpd.GeoDataFrame({"geometry": gpd.GeoSeries(crs=CRS_WGS84)})
     logger.info("Parsed %d matched edges from Valhalla response", len(matched_edges))
     return matched_edges
 
